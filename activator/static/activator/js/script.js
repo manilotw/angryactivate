@@ -301,7 +301,7 @@
         });
 
         section1.classList.remove('disabled');
-        section2.classList.toggle('disabled', !keyValidated);
+        section2.classList.remove('disabled');
         section3.classList.toggle('disabled', !(keyValidated && sessionFilled));
 
         activateBtn.disabled = !(keyValidated && sessionFilled);
@@ -381,10 +381,7 @@
     }
 
     function lockAuthInput() {
-        authTextarea.disabled = true;
-        authTextarea.value = '';
-        validatedAuthSession = '';
-        clearStatus(authStatus, authStatusText);
+        authTextarea.disabled = false;
     }
 
     function unlockAuthInput() {
@@ -435,7 +432,6 @@
             } else {
                 keyValidated = false;
                 validatedKey = '';
-                lockAuthInput();
                 showStatus(keyStatus, keyStatusText, data.message || t('msg_key_fail'), 'error');
             }
 
@@ -444,7 +440,6 @@
         .catch(() => {
             keyValidated = false;
             validatedKey = '';
-            lockAuthInput();
             showStatus(keyStatus, keyStatusText, t('msg_server_error'), 'error');
             updateStepper();
         });
@@ -466,7 +461,6 @@
             } else {
                 clearStatus(keyStatus, keyStatusText);
             }
-            lockAuthInput();
         }
         if (!val) {
             clearStatus(keyStatus, keyStatusText);
@@ -492,13 +486,6 @@
     //     updateStepper();
     // });
     authTextarea.addEventListener('input', () => {
-        if (!keyValidated) {
-            lockAuthInput();
-            showStatus(keyStatus, keyStatusText, t('msg_key_first'), 'error');
-            updateStepper();
-            return;
-        }
-
         const val = authTextarea.value.trim();
         validatedAuthSession = val;
         if (!val) {
@@ -658,6 +645,6 @@
     });
 
     // --- Initialize ---
-    lockAuthInput();
+    unlockAuthInput();
     updateStepper();
 })();
